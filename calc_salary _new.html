@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8" />
+    <title>Özəl sektor Nett əmək haqqı</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 620px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .inputs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .inputs > div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Hər iki input-un hündürlüyü və font ölçüsü */
+        input[type="number"] {
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+            height: 42px;
+            width: 100%;
+        }
+        /* Max düyməsi input ilə eyni səviyyədə yan-yana */
+        .input-with-button {
+            display: flex;
+            gap: 8px;
+        }
+        .input-with-button button {
+            padding: 0 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            height: 42px; /* input ilə eyni hündürlük */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        .input-with-button button:hover {
+            background-color: #1976D2;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button.calc, button.clear {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            height: 45px;
+            transition: background-color 0.3s;
+        }
+        button.calc {
+            background-color: #4CAF50;
+        }
+        button.calc:hover {
+            background-color: #45a049;
+        }
+        button.clear {
+            background-color: #E53935;
+        }
+        button.clear:hover {
+            background-color: #B71C1C;
+        }
+        .breakdown {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .year {
+            width: 48%;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .year:nth-child(2) {
+            background: #FFE0B2;
+        }
+        .year h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+        .year div {
+            margin: 5px 0;
+        }
+        .year:nth-child(2) .net-salary {
+            background: #FFD699;
+            color: #BF360C;
+        }
+        .net-salary {
+            font-weight: bold;
+            color: #2e7d32;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 10px;
+            padding: 8px;
+            background: #c8e6c9;
+            border-radius: 6px;
+        }
+        .diff {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>Özəl sektor Nett əmək haqqı</h2>
+
+        <div class="inputs">
+            <div>
+                <label for="gross">Gross:</label>
+                <input type="number" id="gross" placeholder="Məsələn 5757" />
+            </div>
+            <div>
+                <label for="pasha">Pasha Life:</label>
+                <div class="input-with-button">
+                    <input type="number" id="pasha" placeholder="Məsələn 57" />
+                    <button type="button" onclick="setMaxPasha()">Max</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="calc" onclick="hesabla()">Hesabla</button>
+            <button class="clear" onclick="temizle()">Təmizlə</button>
+        </div>
+
+        <div class="breakdown" id="breakdown"></div>
+        <div class="diff" id="diff"></div>
+    </div>
+
+    <script>
+        function setMaxPasha() {
+            let gross = parseFloat(document.getElementById('gross').value) || 0;
+            let maxPasha = gross * 0.46;
+            document.getElementById('pasha').value = maxPasha.toFixed(2);
+        }
+
+        function temizle() {
+            document.getElementById('gross').value = '';
+            document.getElementById('pasha').value = '';
+            document.getElementById('breakdown').innerHTML = '';
+            document.getElementById('diff').innerText = '';
+        }
+
+        function highlightDifference(value2025, value2026) {
+            if (value2025 !== value2026) {
+                return `<span style="background:#FFCDD2;font-weight:bold;">${value2026.toFixed(2)} AZN</span>`;
+            } else {
+                return `${value2026.toFixed(2)} AZN`;
+            }
+        }
+
+        function hesabla() {
+            let gross = parseFloat(document.getElementById('gross').value);
+            let pasha = parseFloat(document.getElementById('pasha').value) || 0;
+
+            if (isNaN(gross) || gross <= 0) {
+                alert("Zəhmət olmasa düzgün Gross məbləği daxil edin.");
+                return;
+            }
+
+            function calculate2025() {
+                let adjustedGross = gross - pasha;
+                if (adjustedGross < 0) adjustedGross = 0;
+
+                let taxable = adjustedGross - 8000;
+                if (taxable < 0) taxable = 0;
+                let incomeTax = taxable * 0.14;
+
+                let dsmf = adjustedGross <= 200 ? adjustedGross * 0.03 : 6 + (adjustedGross - 200) * 0.10;
+
+                let unemployment = gross * 0.005;
+                let medical = gross <= 8000 ? gross * 0.02 : 160 + (gross - 8000) * 0.005;
+
+                let net = gross - incomeTax - dsmf - unemployment - medical - pasha;
+                return { net, incomeTax, dsmf, unemployment, medical };
+            }
+
+            function calculate2026() {
+                let adjustedGross = gross - pasha;
+                if (adjustedGross < 0) adjustedGross = 0;
+
+                let incomeTax = 0;
+                if (adjustedGross <= 2500) {
+                    incomeTax = adjustedGross * 0.03;
+                } else if (adjustedGross <= 8000) {
+                    incomeTax = 2500*0.03 + (adjustedGross-2500)*0.10;
+                } else {
+                    incomeTax = 2500*0.03 + (8000-2500)*0.10 + (adjustedGross-8000)*0.14;
+                }
+
+                let dsmf = adjustedGross <= 200 ? adjustedGross * 0.03 : 6 + (adjustedGross - 200) * 0.10;
+
+                let unemployment = gross * 0.005;
+                let medical = gross <= 8000 ? gross * 0.02 : 160 + (gross - 8000) * 0.005;
+
+                let net = gross - incomeTax - dsmf - unemployment - medical - pasha;
+                return { net, incomeTax, dsmf, unemployment, medical };
+            }
+
+            let data2025 = calculate2025();
+            let data2026 = calculate2026();
+
+            document.getElementById('breakdown').innerHTML = `
+                <div class="year">
+                    <h3>2025</h3>
+                    <div>Gəlir vergisi: ${data2025.incomeTax.toFixed(2)} AZN</div>
+                    <div>DSMF ayırmaları: ${data2025.dsmf.toFixed(2)} AZN</div>
+                    <div>İşsizlik sığortası: ${data2025.unemployment.toFixed(2)} AZN</div>
+                    <div>İcbari tibbi sığorta: ${data2025.medical.toFixed(2)} AZN</div>
+                    <div class="net-salary">Nett: ${data2025.net.toFixed(2)} AZN</div>
+                </div>
+                <div class="year">
+                    <h3>2026</h3>
+                    <div>Gəlir vergisi: ${highlightDifference(data2025.incomeTax, data2026.incomeTax)}</div>
+                    <div>DSMF ayırmaları: ${highlightDifference(data2025.dsmf, data2026.dsmf)}</div>
+                    <div>İşsizlik sığortası: ${highlightDifference(data2025.unemployment, data2026.unemployment)}</div>
+                    <div>İcbari tibbi sığorta: ${highlightDifference(data2025.medical, data2026.medical)}</div>
+                    <div class="net-salary">Nett: ${highlightDifference(data2025.net, data2026.net)}</div>
+                </div>
+            `;
+
+            let diff = data2026.net - data2025.net;
+            document.getElementById('diff').innerText = `2026 və 2025 arasındakı fərq: ${diff.toFixed(2)} AZN`;
+        }
+    </script>
+</body>
+</html>
